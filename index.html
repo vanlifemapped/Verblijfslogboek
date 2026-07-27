@@ -180,7 +180,6 @@
             padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
         }
 
-        /* Country Toggle Pill Buttons */
         .country-toggle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
 
         .country-pill-btn {
@@ -211,7 +210,6 @@
             outline: none; margin-bottom: 12px; line-height: 1.4;
         }
 
-        /* Photo Upload Boxes */
         .photo-upload-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;
         }
@@ -241,11 +239,9 @@
             align-items: center; justify-content: center; cursor: pointer;
         }
 
-        /* Extra Input Row */
         .inputs-row-2 { display: grid; grid-template-columns: 1fr 1.2fr; gap: 10px; margin-bottom: 16px; }
         .sheet-input { width: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; font-size: 13px; outline: none; }
 
-        /* Action Buttons */
         .sheet-actions-row { display: grid; grid-template-columns: 1fr 1.2fr 1.3fr; gap: 8px; margin-top: 8px; }
         .btn-sheet-clear { background: #fff5f5; border: 1.5px solid #fca5a5; color: #dc2626; padding: 12px 6px; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .btn-sheet-cancel { background: #f1f5f9; border: none; color: #475569; padding: 12px 6px; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; }
@@ -349,15 +345,16 @@
                     </div>
                 </div>
 
+                <!-- Tegel 4: Kosten Maand & Jaar -->
                 <div class="stat-card">
                     <div class="card-top-icons">
                         <span class="card-icon-badge">💶</span>
                         <span class="card-watermark">🧾</span>
                     </div>
                     <div>
-                        <div class="card-title-text">Totale Kosten</div>
-                        <div class="card-main-number" style="font-size: 22px;" id="statTotalCost">€ 0</div>
-                        <div class="card-sub-text">verblijfskosten</div>
+                        <div class="card-title-text" id="statCostMonthLabel">Maand Kosten</div>
+                        <div class="card-main-number" style="font-size: 21px;" id="statMonthCost">€ 0.00</div>
+                        <div class="card-sub-text" id="statYearCost">Jaartotaal: € 0.00</div>
                     </div>
                 </div>
             </div>
@@ -445,7 +442,6 @@
             <button class="btn-prev-day" onclick="navigateDay(-1)">← Vorige dag</button>
         </div>
 
-        <!-- Country Selection Pills -->
         <div class="country-toggle-grid">
             <button class="country-pill-btn" id="btnPillNL" onclick="selectCountry('NL')">
                 <span>📍 In Nederland</span>
@@ -455,14 +451,12 @@
             </button>
         </div>
 
-        <!-- Verslag / Location Area -->
         <div class="section-label-row">
             <span class="section-label">Verslag</span>
             <button class="btn-insert-location" onclick="fetchSmartLocation()">Locatie invoegen</button>
         </div>
         <textarea class="textarea-location" id="sheetLocationText" placeholder="Locatie: Straat, Plaats, Nederland"></textarea>
 
-        <!-- Bewijsfoto's Sectie -->
         <span class="section-label" style="display:block; margin-bottom: 6px;">Bewijsfoto's</span>
         <div class="photo-preview-area" id="photoPreviewContainer"></div>
 
@@ -477,11 +471,9 @@
             </div>
         </div>
 
-        <!-- Hidden File Inputs -->
         <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" onchange="handlePhotoUpload(event)">
         <input type="file" id="galleryInput" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
 
-        <!-- Costs & Proof Text -->
         <div class="inputs-row-2">
             <div>
                 <span class="section-label" style="display:block; margin-bottom: 4px;">Kosten (€)</span>
@@ -493,7 +485,6 @@
             </div>
         </div>
 
-        <!-- Action Buttons -->
         <div class="sheet-actions-row">
             <button class="btn-sheet-clear" onclick="clearCurrentEntry()">🗑️ Wis</button>
             <button class="btn-sheet-cancel" onclick="closeEntrySheet()">Annuleer</button>
@@ -545,12 +536,25 @@
     function renderStats() {
         let nlCount = 0;
         let foreignCount = 0;
-        let totalCost = 0;
+        let monthCost = 0;
+        let totalYearCost = 0;
 
-        Object.values(logs).forEach(entry => {
+        const currentMonthPrefix = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}`;
+        const monthsShort = ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+
+        Object.entries(logs).forEach(([dateKey, entry]) => {
             if (entry.status === 'NL') nlCount++;
             if (entry.status === 'FOREIGN') foreignCount++;
-            if (entry.cost) totalCost += parseFloat(entry.cost) || 0;
+            
+            if (entry.cost) {
+                const costVal = parseFloat(entry.cost) || 0;
+                totalYearCost += costVal;
+                
+                // Calculate monthly cost based on active calendar view month
+                if (dateKey.startsWith(currentMonthPrefix)) {
+                    monthCost += costVal;
+                }
+            }
         });
 
         let needed = Math.max(0, 122 - nlCount);
@@ -559,7 +563,12 @@
         document.getElementById('statNlDays').innerText = nlCount;
         document.getElementById('statForeignDays').innerText = foreignCount;
         document.getElementById('statNeededDays').innerText = needed;
-        document.getElementById('statTotalCost').innerText = `€ ${totalCost.toFixed(2)}`;
+        
+        // Cost Display
+        document.getElementById('statCostMonthLabel').innerText = `Kosten (${monthsShort[viewDate.getMonth()]})`;
+        document.getElementById('statMonthCost').innerText = `€ ${monthCost.toFixed(2)}`;
+        document.getElementById('statYearCost').innerText = `Jaartotaal: € ${totalYearCost.toFixed(2)}`;
+
         document.getElementById('statProgressPct').innerText = `${pct}%`;
         document.getElementById('progressBarFill').style.width = `${pct}%`;
         document.getElementById('headerSummaryText').innerText = `2026 - ${nlCount} van 122 dagen`;
@@ -608,6 +617,8 @@
             cell.onclick = () => openEntrySheet(dateStr);
             grid.appendChild(cell);
         }
+        
+        renderStats();
     }
 
     function changeMonth(delta) {
@@ -734,14 +745,12 @@
         closeEntrySheet();
     }
 
-    // Photo Handling
     function handlePhotoUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
         reader.onload = function(e) {
-            // Compress photo via Canvas to fit in LocalStorage
             const img = new Image();
             img.src = e.target.result;
             img.onload = function() {
