@@ -6,7 +6,7 @@
     <title>Verblijfslogboek</title>
     <style>
         :root {
-            --primary-navy: #0a337a;
+            --primary-navy: #0b3275;
             --primary-blue: #1652f0;
             --header-gradient: linear-gradient(180deg, #072763 0%, #0d3b8e 100%);
             --bg-canvas: #f0f3f8;
@@ -23,49 +23,30 @@
         }
 
         * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            box-sizing: border-box; margin: 0; padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-canvas);
-            color: var(--text-dark);
-            padding-bottom: 40px;
-            display: flex;
-            justify-content: center;
+            background-color: var(--bg-canvas); color: var(--text-dark);
+            padding-bottom: 40px; display: flex; justify-content: center;
         }
 
         .app-shell {
-            width: 100%;
-            max-width: 480px;
-            min-height: 100vh;
-            background-color: var(--bg-canvas);
-            position: relative;
+            width: 100%; max-width: 480px; min-height: 100vh;
+            background-color: var(--bg-canvas); position: relative;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
         }
 
         /* Header */
         .header {
-            background: var(--header-gradient);
-            color: white;
-            padding: 18px 20px 22px 20px;
-            position: relative;
-            overflow: hidden;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
+            background: var(--header-gradient); color: white;
+            padding: 18px 20px 22px 20px; position: relative; overflow: hidden;
+            border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
         }
 
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 2;
-            position: relative;
-        }
-
+        .header-top { display: flex; align-items: center; justify-content: space-between; z-index: 2; position: relative; }
         .title-group { display: flex; align-items: center; gap: 10px; }
         .flag-icon { font-size: 22px; line-height: 1; }
         .app-title { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
@@ -163,31 +144,120 @@
         .pill-nl { background-color: var(--green-bg); color: var(--green-text); }
         .pill-foreign { background-color: var(--orange-bg); color: var(--orange-text); }
 
-        /* Location Input with GPS */
-        .location-input-group { display: flex; gap: 8px; margin-bottom: 14px; }
-        .btn-gps {
-            background: #e2e8f0; border: none; padding: 0 14px; border-radius: 10px; font-size: 13px;
-            font-weight: 600; color: var(--primary-navy); cursor: pointer; display: flex;
-            align-items: center; gap: 4px; white-space: nowrap;
+        /* iOS Bottom Sheet Modal Styling */
+        .sheet-overlay {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center;
+            z-index: 1000;
+        }
+        .sheet-overlay.active { display: flex; }
+
+        .sheet-card {
+            background: #f8fafc; border-top-left-radius: 28px; border-top-right-radius: 28px;
+            width: 100%; max-width: 480px; padding: 12px 18px 24px 18px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto;
+            position: relative; animation: slideUp 0.25s cubic-bezier(0, 0, 0.2, 1);
         }
 
-        /* Modal */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
-        .modal-overlay.active { display: flex; }
-        .modal-card { background: white; border-radius: 20px; width: 100%; max-width: 420px; padding: 22px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-        .modal-header-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: var(--text-dark); }
-        .form-label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; }
-        .form-control { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; }
-        .modal-actions { display: flex; gap: 10px; margin-top: 14px; }
-        .btn-modal-cancel { flex: 1; background: #f1f5f9; color: #475569; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
-        .btn-modal-save { flex: 1; background: var(--primary-navy); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .sheet-handle {
+            width: 38px; height: 5px; background: #cbd5e1; border-radius: 3px;
+            margin: 0 auto 14px auto;
+        }
+
+        .sheet-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+        }
+
+        .sheet-date-title { font-size: 18px; font-weight: 800; color: #0f172a; }
+
+        .btn-prev-day {
+            background: white; border: 1.5px solid #3b82f6; color: #2563eb;
+            padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
+        }
+
+        /* Country Toggle Pill Buttons */
+        .country-toggle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+
+        .country-pill-btn {
+            background: #f1f5f9; border: 1.5px solid transparent; padding: 14px;
+            border-radius: 16px; font-size: 15px; font-weight: 600; color: #475569;
+            display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
+        }
+
+        .country-pill-btn.active-nl {
+            background: white; border-color: #cbd5e1; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        .country-pill-btn.active-foreign {
+            background: white; border-color: #cbd5e1; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        .section-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .section-label { font-size: 13px; font-weight: 600; color: #64748b; }
+
+        .btn-insert-location {
+            background: white; border: 1.5px solid #3b82f6; color: #2563eb;
+            padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
+        }
+
+        .textarea-location {
+            width: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 14px;
+            padding: 12px 14px; font-size: 14px; color: #1e293b; min-height: 60px; resize: none;
+            outline: none; margin-bottom: 12px; line-height: 1.4;
+        }
+
+        /* Photo Upload Boxes */
+        .photo-upload-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;
+        }
+
+        .photo-box-btn {
+            background: #ffffff; border: 1.5px dashed #cbd5e1; border-radius: 16px;
+            padding: 16px 10px; text-align: center; cursor: pointer; display: flex;
+            flex-direction: column; align-items: center; gap: 6px;
+        }
+
+        .photo-box-btn span.icon { font-size: 24px; }
+        .photo-box-btn span.text { font-size: 12px; font-weight: 600; color: #64748b; }
+
+        .photo-preview-area {
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px;
+        }
+
+        .photo-preview-item {
+            position: relative; width: 65px; height: 65px; border-radius: 10px; overflow: hidden;
+            border: 1px solid #cbd5e1; flex-shrink: 0;
+        }
+
+        .photo-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-delete-badge {
+            position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6); color: white;
+            border-radius: 50%; width: 18px; height: 18px; font-size: 11px; display: flex;
+            align-items: center; justify-content: center; cursor: pointer;
+        }
+
+        /* Extra Input Row */
+        .inputs-row-2 { display: grid; grid-template-columns: 1fr 1.2fr; gap: 10px; margin-bottom: 16px; }
+        .sheet-input { width: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; font-size: 13px; outline: none; }
+
+        /* Action Buttons */
+        .sheet-actions-row { display: grid; grid-template-columns: 1fr 1.2fr 1.3fr; gap: 8px; margin-top: 8px; }
+        .btn-sheet-clear { background: #fff5f5; border: 1.5px solid #fca5a5; color: #dc2626; padding: 12px 6px; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .btn-sheet-cancel { background: #f1f5f9; border: none; color: #475569; padding: 12px 6px; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .btn-sheet-save { background: #0b3275; border: none; color: white; padding: 12px 6px; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
 
         @media print {
             body { background: white !important; color: black !important; }
             .app-shell { max-width: 100% !important; box-shadow: none !important; }
-            .nav-tabs-wrapper, .btn-navy-action, .grid-2-btns, .modal-overlay, .cal-nav-btn, .backup-links { display: none !important; }
+            .nav-tabs-wrapper, .btn-navy-action, .grid-2-btns, .sheet-overlay, .cal-nav-btn, .backup-links { display: none !important; }
             .print-header-report { display: block !important; }
             .log-card-item { border: 1px solid #ddd !important; box-shadow: none !important; break-inside: avoid; }
+            .photo-preview-area { display: flex !important; }
         }
 
         .print-header-report { display: none; padding: 20px; border-bottom: 2px solid #0a337a; margin-bottom: 20px; }
@@ -302,7 +372,7 @@
                 </div>
             </div>
 
-            <button class="btn-navy-action" onclick="openEntryModal()">
+            <button class="btn-navy-action" onclick="openEntrySheet()">
                 <span>📝 Log invullen voor vandaag</span>
                 <span>›</span>
             </button>
@@ -365,37 +435,69 @@
     </div>
 </div>
 
-<!-- Modal Dialog -->
-<div class="modal-overlay" id="entryModal">
-    <div class="modal-card">
-        <div class="modal-header-title" id="modalTitle">Verblijf Loggen</div>
+<!-- iOS Bottom Sheet Modal -->
+<div class="sheet-overlay" id="entrySheet">
+    <div class="sheet-card">
+        <div class="sheet-handle"></div>
         
-        <label class="form-label">Datum</label>
-        <input type="date" class="form-control" id="inputDate" style="margin-bottom: 14px;">
-
-        <label class="form-label">Locatie / Adres</label>
-        <div class="location-input-group">
-            <input type="text" class="form-control" id="inputLocation" list="recentLocations" placeholder="bijv. Buikheidehuys, Kreijl 3, Wintelre">
-            <button class="btn-gps" type="button" onclick="getCurrentGPSLocation()">📍 GPS</button>
+        <div class="sheet-header">
+            <div class="sheet-date-title" id="sheetDateTitle">maandag 27 juli 2026</div>
+            <button class="btn-prev-day" onclick="navigateDay(-1)">← Vorige dag</button>
         </div>
-        <!-- Snelkeuze lijst van eerder gebruikte locaties -->
-        <datalist id="recentLocations"></datalist>
 
-        <label class="form-label">Land Status</label>
-        <select class="form-control" id="inputStatus" style="margin-bottom: 14px;">
-            <option value="NL">In Nederland</option>
-            <option value="FOREIGN">Buiten NL</option>
-        </select>
+        <!-- Country Selection Pills -->
+        <div class="country-toggle-grid">
+            <button class="country-pill-btn" id="btnPillNL" onclick="selectCountry('NL')">
+                <span>📍 In Nederland</span>
+            </button>
+            <button class="country-pill-btn" id="btnPillForeign" onclick="selectCountry('FOREIGN')">
+                <span>✈️ Buiten Nederland</span>
+            </button>
+        </div>
 
-        <label class="form-label">Kosten per nacht (€)</label>
-        <input type="number" step="0.01" class="form-control" id="inputCost" placeholder="0.00" style="margin-bottom: 14px;">
+        <!-- Verslag / Location Area -->
+        <div class="section-label-row">
+            <span class="section-label">Verslag</span>
+            <button class="btn-insert-location" onclick="fetchSmartLocation()">Locatie invoegen</button>
+        </div>
+        <textarea class="textarea-location" id="sheetLocationText" placeholder="Locatie: Straat, Plaats, Nederland"></textarea>
 
-        <label class="form-label">Betalingsbewijs / Opmerking</label>
-        <input type="text" class="form-control" id="inputPayment" placeholder="bijv. Pinbetaling, Factuurnr #1092" style="margin-bottom: 14px;">
+        <!-- Bewijsfoto's Sectie -->
+        <span class="section-label" style="display:block; margin-bottom: 6px;">Bewijsfoto's</span>
+        <div class="photo-preview-area" id="photoPreviewContainer"></div>
 
-        <div class="modal-actions">
-            <button class="btn-modal-cancel" onclick="closeEntryModal()">Annuleren</button>
-            <button class="btn-modal-save" onclick="saveLogEntry()">Opslaan</button>
+        <div class="photo-upload-grid">
+            <div class="photo-box-btn" onclick="document.getElementById('cameraInput').click()">
+                <span class="icon">📷</span>
+                <span class="text">Foto maken</span>
+            </div>
+            <div class="photo-box-btn" onclick="document.getElementById('galleryInput').click()">
+                <span class="icon">🖼️</span>
+                <span class="text">Uit galerij kiezen</span>
+            </div>
+        </div>
+
+        <!-- Hidden File Inputs -->
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" onchange="handlePhotoUpload(event)">
+        <input type="file" id="galleryInput" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
+
+        <!-- Costs & Proof Text -->
+        <div class="inputs-row-2">
+            <div>
+                <span class="section-label" style="display:block; margin-bottom: 4px;">Kosten (€)</span>
+                <input type="number" step="0.01" class="sheet-input" id="sheetCostInput" placeholder="0.00">
+            </div>
+            <div>
+                <span class="section-label" style="display:block; margin-bottom: 4px;">Betalingsbewijs</span>
+                <input type="text" class="sheet-input" id="sheetPaymentInput" placeholder="bijv. Pin / Factuur">
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="sheet-actions-row">
+            <button class="btn-sheet-clear" onclick="clearCurrentEntry()">🗑️ Wis</button>
+            <button class="btn-sheet-cancel" onclick="closeEntrySheet()">Annuleer</button>
+            <button class="btn-sheet-save" onclick="saveSheetEntry()">✓ Opslaan</button>
         </div>
     </div>
 </div>
@@ -403,6 +505,9 @@
 <script>
     const STORAGE_KEY = 'verblijfslogboek_v2_data';
     let logs = {};
+    let activeDateStr = '';
+    let activeCountry = 'NL';
+    let activePhotos = [];
 
     function loadData() {
         try {
@@ -500,7 +605,7 @@
                 cell.classList.add('is-today');
             }
 
-            cell.onclick = () => openEntryModal(dateStr);
+            cell.onclick = () => openEntrySheet(dateStr);
             grid.appendChild(cell);
         }
     }
@@ -531,11 +636,12 @@
 
             const item = document.createElement('div');
             item.className = 'log-card-item';
-            item.onclick = () => openEntryModal(dateStr);
+            item.onclick = () => openEntrySheet(dateStr);
 
             let subInfoParts = [];
             if (entry.cost) subInfoParts.push(`€${parseFloat(entry.cost).toFixed(2)} / nacht`);
             if (entry.payment) subInfoParts.push(`Bewijs: ${entry.payment}`);
+            if (entry.photos && entry.photos.length > 0) subInfoParts.push(`📷 ${entry.photos.length} foto('s)`);
 
             const badgeClass = entry.status === 'NL' ? 'pill-nl' : 'pill-foreign';
             const statusLabel = entry.status === 'NL' ? 'In Nederland' : 'Buiten NL';
@@ -543,7 +649,7 @@
             item.innerHTML = `
                 <div>
                     <div class="log-date">${formattedDate}</div>
-                    <div class="log-location">Locatie: ${entry.location || 'Niet opgegeven'}</div>
+                    <div class="log-location">${entry.location || 'Niet opgegeven'}</div>
                     ${subInfoParts.length > 0 ? `<div class="log-sub-info">${subInfoParts.join(' • ')}</div>` : ''}
                 </div>
                 <div class="pill-badge ${badgeClass}">${statusLabel}</div>
@@ -553,113 +659,185 @@
         });
     }
 
-    // Populate datalist with unique previous locations
-    function updateLocationSuggestions() {
-        const datalist = document.getElementById('recentLocations');
-        datalist.innerHTML = '';
-        const uniqueLocations = new Set();
-        
-        Object.values(logs).forEach(log => {
-            if (log.location && log.location.trim() !== '') {
-                uniqueLocations.add(log.location.trim());
-            }
-        });
+    function selectCountry(status) {
+        activeCountry = status;
+        const btnNL = document.getElementById('btnPillNL');
+        const btnForeign = document.getElementById('btnPillForeign');
 
-        uniqueLocations.forEach(loc => {
-            const opt = document.createElement('option');
-            opt.value = loc;
-            datalist.appendChild(opt);
+        if (status === 'NL') {
+            btnNL.classList.add('active-nl');
+            btnForeign.classList.remove('active-foreign');
+        } else {
+            btnForeign.classList.add('active-foreign');
+            btnNL.classList.remove('active-nl');
+        }
+    }
+
+    function openEntrySheet(dateStr = null) {
+        activeDateStr = dateStr || new Date().toISOString().split('T')[0];
+        
+        const d = new Date(activeDateStr);
+        const daysDutch = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'];
+        const monthsDutch = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
+        
+        document.getElementById('sheetDateTitle').innerText = `${daysDutch[d.getDay()]} ${d.getDate()} ${monthsDutch[d.getMonth()]} ${d.getFullYear()}`;
+
+        if (logs[activeDateStr]) {
+            const entry = logs[activeDateStr];
+            document.getElementById('sheetLocationText').value = entry.location || '';
+            document.getElementById('sheetCostInput').value = entry.cost || '';
+            document.getElementById('sheetPaymentInput').value = entry.payment || '';
+            activePhotos = entry.photos || [];
+            selectCountry(entry.status || 'NL');
+        } else {
+            document.getElementById('sheetLocationText').value = '';
+            document.getElementById('sheetCostInput').value = '';
+            document.getElementById('sheetPaymentInput').value = '';
+            activePhotos = [];
+            selectCountry('NL');
+        }
+
+        renderPhotoPreviews();
+        document.getElementById('entrySheet').classList.add('active');
+    }
+
+    function closeEntrySheet() {
+        document.getElementById('entrySheet').classList.remove('active');
+    }
+
+    function navigateDay(delta) {
+        const d = new Date(activeDateStr);
+        d.setDate(d.getDate() + delta);
+        openEntrySheet(d.toISOString().split('T')[0]);
+    }
+
+    function clearCurrentEntry() {
+        if (logs[activeDateStr]) {
+            delete logs[activeDateStr];
+            persistData();
+        }
+        closeEntrySheet();
+    }
+
+    function saveSheetEntry() {
+        if (!activeDateStr) return;
+
+        logs[activeDateStr] = {
+            location: document.getElementById('sheetLocationText').value,
+            status: activeCountry,
+            cost: document.getElementById('sheetCostInput').value,
+            payment: document.getElementById('sheetPaymentInput').value,
+            photos: activePhotos
+        };
+
+        persistData();
+        closeEntrySheet();
+    }
+
+    // Photo Handling
+    function handlePhotoUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Compress photo via Canvas to fit in LocalStorage
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const maxDim = 800;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > maxDim) { height *= maxDim / width; width = maxDim; }
+                } else {
+                    if (height > maxDim) { width *= maxDim / height; height = maxDim; }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                activePhotos.push(compressedDataUrl);
+                renderPhotoPreviews();
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function renderPhotoPreviews() {
+        const container = document.getElementById('photoPreviewContainer');
+        container.innerHTML = '';
+        activePhotos.forEach((src, index) => {
+            const item = document.createElement('div');
+            item.className = 'photo-preview-item';
+            item.innerHTML = `
+                <img src="${src}">
+                <div class="photo-delete-badge" onclick="removePhoto(${index})">✕</div>
+            `;
+            container.appendChild(item);
         });
     }
 
-    // Get current address via GPS
-    function getCurrentGPSLocation() {
-        const locationInput = document.getElementById('inputLocation');
+    function removePhoto(index) {
+        activePhotos.splice(index, 1);
+        renderPhotoPreviews();
+    }
+
+    function fetchSmartLocation() {
+        const txtArea = document.getElementById('sheetLocationText');
         if (!navigator.geolocation) {
-            alert("GPS wordt niet ondersteund door je browser.");
+            alert("GPS wordt niet ondersteund.");
             return;
         }
 
-        locationInput.value = "Locatie ophalen...";
+        txtArea.value = "Locatie ophalen...";
 
         navigator.geolocation.getCurrentPosition(
             async (position) => {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 try {
-                    // Reverse geocoding via gratis OpenStreetMap API
-                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
                     const data = await res.json();
                     
                     if (data && data.address) {
+                        const campsite = data.address.camp_site || data.address.caravan_site || data.address.tourism || data.name || '';
                         const road = data.address.road || data.address.pedestrian || '';
                         const houseNum = data.address.house_number || '';
                         const town = data.address.town || data.address.village || data.address.city || '';
-                        
-                        let formattedAddress = `${road} ${houseNum}`.trim();
-                        if (town) formattedAddress += (formattedAddress ? `, ${town}` : town);
-                        
-                        locationInput.value = formattedAddress || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
-                        
-                        // Auto-set country status
+                        const country = data.address.country || 'Nederland';
+
+                        let parts = [];
+                        if (campsite && campsite !== road) parts.push(campsite);
+                        if (road) parts.push(`${road} ${houseNum}`.trim());
+                        if (town) parts.push(town);
+                        parts.push(country);
+
+                        txtArea.value = `Locatie: ${parts.join(', ')}`;
+
                         if (data.address.country_code === 'nl') {
-                            document.getElementById('inputStatus').value = 'NL';
+                            selectCountry('NL');
                         } else {
-                            document.getElementById('inputStatus').value = 'FOREIGN';
+                            selectCountry('FOREIGN');
                         }
                     } else {
-                        locationInput.value = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                        txtArea.value = `Locatie: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
                     }
                 } catch (e) {
-                    locationInput.value = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                    txtArea.value = `Locatie: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
                 }
             },
             (error) => {
-                alert("GPS-locatie kon niet worden opgehaald. Controleer je locatie-instellingen.");
-                locationInput.value = "";
+                alert("GPS-locatie kon niet worden opgehaald.");
+                txtArea.value = "";
             },
-            { enableHighAccuracy: true, timeout: 8000 }
+            { enableHighAccuracy: true, timeout: 10000 }
         );
-    }
-
-    function openEntryModal(selectedDate = null) {
-        updateLocationSuggestions();
-        const dateInput = document.getElementById('inputDate');
-        const targetDate = selectedDate || new Date().toISOString().split('T')[0];
-        dateInput.value = targetDate;
-
-        if (logs[targetDate]) {
-            document.getElementById('inputLocation').value = logs[targetDate].location || '';
-            document.getElementById('inputStatus').value = logs[targetDate].status || 'NL';
-            document.getElementById('inputCost').value = logs[targetDate].cost || '';
-            document.getElementById('inputPayment').value = logs[targetDate].payment || '';
-        } else {
-            document.getElementById('inputLocation').value = '';
-            document.getElementById('inputStatus').value = 'NL';
-            document.getElementById('inputCost').value = '';
-            document.getElementById('inputPayment').value = '';
-        }
-
-        document.getElementById('entryModal').classList.add('active');
-    }
-
-    function closeEntryModal() {
-        document.getElementById('entryModal').classList.remove('active');
-    }
-
-    function saveLogEntry() {
-        const date = document.getElementById('inputDate').value;
-        if (!date) return;
-
-        logs[date] = {
-            location: document.getElementById('inputLocation').value,
-            status: document.getElementById('inputStatus').value,
-            cost: document.getElementById('inputCost').value,
-            payment: document.getElementById('inputPayment').value
-        };
-
-        persistData();
-        closeEntryModal();
     }
 
     function exportToPDF() {
