@@ -18,8 +18,9 @@
             --orange-bg: #fff0e5;
             --orange-text: #d9530f;
             --red-num: #b91c1c;
-            --beige-btn: #e6dfd3;
-            --beige-btn-text: #4a4235;
+            --beige-btn: #f1ebd9;
+            --beige-btn-border: #e2d7be;
+            --beige-btn-text: #3d3527;
         }
 
         * {
@@ -42,18 +43,19 @@
         /* Header */
         .header {
             background: var(--header-gradient); color: white;
-            padding: 18px 20px 22px 20px; position: relative; overflow: hidden;
-            border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
+            padding: 20px 20px 24px 20px; position: relative; overflow: hidden;
+            border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+            box-shadow: 0 4px 15px rgba(7, 39, 99, 0.25);
         }
 
         .header-top { display: flex; align-items: center; justify-content: space-between; z-index: 2; position: relative; }
         .title-group { display: flex; align-items: center; gap: 10px; }
-        .flag-icon { font-size: 22px; line-height: 1; }
-        .app-title { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
-        .app-subtitle { font-size: 13px; color: rgba(255, 255, 255, 0.75); margin-top: 4px; font-weight: 400; }
+        .flag-icon { font-size: 24px; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+        .app-title { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
+        .app-subtitle { font-size: 13px; color: rgba(255, 255, 255, 0.85); margin-top: 4px; font-weight: 500; }
 
         .camper-illustration {
-            position: absolute; right: 15px; top: 15px; width: 110px; opacity: 0.25; pointer-events: none;
+            position: absolute; right: 15px; top: 15px; width: 110px; opacity: 0.22; pointer-events: none;
         }
 
         /* Tabs */
@@ -63,10 +65,10 @@
         .tab-btn {
             flex: 1; padding: 14px 0; border: none; background: none; font-size: 14px; font-weight: 600;
             color: #64748b; cursor: pointer; position: relative; display: flex; align-items: center;
-            justify-content: center; gap: 6px; transition: color 0.2s ease;
+            justify-content: center; gap: 6px; transition: all 0.2s ease;
         }
 
-        .tab-btn.active { color: var(--primary-navy); }
+        .tab-btn.active { color: var(--primary-navy); font-weight: 700; }
         .tab-btn.active::after {
             content: ''; position: absolute; bottom: 0; left: 15%; width: 70%; height: 3px;
             background-color: var(--primary-navy); border-top-left-radius: 3px; border-top-right-radius: 3px;
@@ -74,183 +76,141 @@
 
         .content-area { padding: 16px; }
 
+        /* Period Selector Card */
+        .period-card {
+            background: white; border-radius: 18px; padding: 14px 16px; margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid #e2e8f0;
+        }
+        .period-card-title { font-size: 12px; font-weight: 800; color: var(--primary-navy); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .period-inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .period-field { display: flex; flex-direction: column; gap: 2px; }
+        .period-field label { font-size: 11px; font-weight: 600; color: #64748b; }
+        .period-field input { border: 1px solid #cbd5e1; border-radius: 10px; padding: 6px 10px; font-size: 12px; font-weight: 600; color: #1e293b; outline: none; background: #f8fafc; }
+
         /* Grid Cards */
         .grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
         .stat-card {
-            background: var(--card-bg); border-radius: 18px; padding: 14px 16px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03); position: relative; display: flex;
-            flex-direction: column; justify-content: space-between; min-height: 105px;
+            background: var(--card-bg); border-radius: 20px; padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); position: relative; display: flex;
+            flex-direction: column; justify-content: space-between; min-height: 110px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
         .card-top-icons { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
         .card-icon-badge {
-            width: 28px; height: 28px; border-radius: 50%; background-color: #f0f4fa;
-            display: flex; align-items: center; justify-content: center; font-size: 13px;
+            width: 30px; height: 30px; border-radius: 50%; background-color: #f0f4fa;
+            display: flex; align-items: center; justify-content: center; font-size: 14px;
         }
         .card-watermark { font-size: 18px; opacity: 0.6; }
         .card-title-text { font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; }
-        .card-main-number { font-size: 30px; font-weight: 800; line-height: 1.1; margin: 2px 0; color: var(--text-dark); }
+        .card-main-number { font-size: 28px; font-weight: 800; line-height: 1.1; margin: 3px 0; color: var(--text-dark); }
         .card-main-number.red { color: var(--red-num); }
         .card-main-number.orange { color: #c2410c; }
-        .card-sub-text { font-size: 11px; color: var(--text-muted); }
+        .card-sub-text { font-size: 11px; color: var(--text-muted); font-weight: 500; }
 
         /* Progress Card */
-        .progress-card { background: var(--card-bg); border-radius: 18px; padding: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); margin-bottom: 16px; }
-        .progress-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--text-dark); }
-        .progress-track { background-color: #e5e9f0; height: 10px; border-radius: 10px; overflow: hidden; }
+        .progress-card { background: var(--card-bg); border-radius: 20px; padding: 18px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 16px; }
+        .progress-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--text-dark); }
+        .progress-track { background-color: #e5e9f0; height: 12px; border-radius: 10px; overflow: hidden; }
         .progress-bar-fill { background-color: #b91c1c; height: 100%; border-radius: 10px; width: 0%; transition: width 0.4s ease; }
 
         /* Buttons */
         .btn-navy-action {
-            width: 100%; background: var(--primary-navy); color: white; border: none; padding: 16px;
-            border-radius: 14px; font-size: 15px; font-weight: 700; display: flex; align-items: center;
-            justify-content: space-between; cursor: pointer; box-shadow: 0 4px 12px rgba(10, 51, 122, 0.2);
-            margin-bottom: 12px;
+            width: 100%; background: linear-gradient(135deg, #0b3275 0%, #1d4ed8 100%);
+            color: white; border: none; padding: 16px 20px; border-radius: 18px; font-size: 15px;
+            font-weight: 700; display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; box-shadow: 0 6px 18px rgba(11, 50, 117, 0.28); margin-bottom: 12px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
+
+        .btn-navy-action:active { transform: scale(0.98); box-shadow: 0 3px 10px rgba(11, 50, 117, 0.2); }
 
         .grid-2-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-        .btn-beige {
-            background-color: var(--beige-btn); color: var(--beige-btn-text); border: none; padding: 14px 12px;
-            border-radius: 12px; font-size: 14px; font-weight: 600; display: flex; align-items: center;
-            justify-content: space-between; cursor: pointer;
+        
+        .btn-beige-sexy {
+            background: linear-gradient(180deg, #f7f3e8 0%, #ede3cc 100%);
+            color: var(--beige-btn-text); border: 1px solid var(--beige-btn-border);
+            padding: 14px 14px; border-radius: 16px; font-size: 13px; font-weight: 700;
+            display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: transform 0.15s ease;
         }
 
-        .backup-links { display: flex; justify-content: center; gap: 16px; margin-top: 10px; }
-        .backup-btn { background: none; border: none; font-size: 12px; color: #64748b; text-decoration: underline; cursor: pointer; }
+        .btn-beige-sexy:active { transform: scale(0.98); }
 
-        /* Calendar */
-        .calendar-card { background: var(--card-bg); border-radius: 20px; padding: 18px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .backup-links { display: flex; justify-content: center; gap: 20px; margin-top: 14px; }
+        .backup-btn { background: none; border: none; font-size: 12px; color: #64748b; text-decoration: underline; cursor: pointer; font-weight: 500; }
+
+        /* Calendar Card */
+        .calendar-card { background: var(--card-bg); border-radius: 22px; padding: 18px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 8px; }
-        .cal-header-title { font-size: 17px; font-weight: 700; }
-        .cal-nav-btn { background: #f0f3f8; border: none; width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .cal-grid-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; }
+        .cal-header-title { font-size: 17px; font-weight: 800; }
+        .cal-nav-btn { background: #f0f3f8; border: none; width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; color: #334155; }
+        .cal-grid-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; }
         .cal-grid-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-        .cal-day-cell { aspect-ratio: 1; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; color: #475569; cursor: pointer; position: relative; }
+        .cal-day-cell { aspect-ratio: 1; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: #475569; cursor: pointer; position: relative; }
         .cal-day-cell.other-month { color: #cbd5e1; }
-        .cal-day-cell.is-nl { background-color: #d8f3e5; color: #0d6b3e; font-weight: 700; }
+        .cal-day-cell.is-nl { background-color: #d8f3e5; color: #0d6b3e; font-weight: 800; }
         .cal-day-cell.is-nl::after { content: ''; width: 4px; height: 4px; background-color: #0d6b3e; border-radius: 50%; position: absolute; bottom: 4px; }
-        .cal-day-cell.is-foreign { background-color: #ffe6d5; color: #c2410c; font-weight: 700; }
-        .cal-day-cell.is-today { border: 2px solid var(--primary-blue); color: var(--primary-blue); font-weight: 700; }
-        .cal-legend { display: flex; justify-content: flex-start; gap: 16px; margin-top: 20px; padding-top: 14px; border-top: 1px solid #f1f5f9; font-size: 12px; color: var(--text-muted); }
+        .cal-day-cell.is-foreign { background-color: #ffe6d5; color: #c2410c; font-weight: 800; }
+        .cal-day-cell.is-today { border: 2.5px solid var(--primary-blue); color: var(--primary-blue); font-weight: 800; }
+        .cal-legend { display: flex; justify-content: flex-start; gap: 16px; margin-top: 20px; padding-top: 14px; border-top: 1px solid #f1f5f9; font-size: 12px; color: var(--text-muted); font-weight: 500; }
         .legend-item { display: flex; align-items: center; gap: 6px; }
         .legend-dot { width: 12px; height: 12px; border-radius: 4px; }
 
         /* Logbook List */
-        .log-card-item { background: white; border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); cursor: pointer; }
-        .log-date { font-size: 15px; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; }
-        .log-location { font-size: 13px; color: #64748b; }
+        .log-card-item { background: white; border-radius: 18px; padding: 14px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03); cursor: pointer; }
+        .log-date { font-size: 15px; font-weight: 800; color: var(--text-dark); margin-bottom: 3px; }
+        .log-location { font-size: 13px; color: #475569; font-weight: 500; }
         .log-sub-info { font-size: 11px; color: #94a3b8; margin-top: 3px; }
-        .pill-badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+        .pill-badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; white-space: nowrap; }
         .pill-nl { background-color: var(--green-bg); color: var(--green-text); }
         .pill-foreign { background-color: var(--orange-bg); color: var(--orange-text); }
 
         /* iOS Bottom Sheet Modal Styling */
-        .sheet-overlay {
-            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center;
-            z-index: 1000;
-        }
+        .sheet-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(5px); display: none; align-items: flex-end; justify-content: center; z-index: 1000; }
         .sheet-overlay.active { display: flex; }
 
-        .sheet-card {
-            background: #f8fafc; border-top-left-radius: 28px; border-top-right-radius: 28px;
-            width: 100%; max-width: 480px; padding: 12px 18px 24px 18px;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto;
-            position: relative; animation: slideUp 0.25s cubic-bezier(0, 0, 0.2, 1);
-        }
+        .sheet-card { background: #f8fafc; border-top-left-radius: 28px; border-top-right-radius: 28px; width: 100%; max-width: 480px; padding: 12px 18px 24px 18px; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; position: relative; animation: slideUp 0.25s cubic-bezier(0, 0, 0.2, 1); }
 
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        .sheet-handle {
-            width: 38px; height: 5px; background: #cbd5e1; border-radius: 3px;
-            margin: 0 auto 14px auto;
-        }
-
-        .sheet-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
-        }
-
+        .sheet-handle { width: 38px; height: 5px; background: #cbd5e1; border-radius: 3px; margin: 0 auto 14px auto; }
+        .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .sheet-date-title { font-size: 18px; font-weight: 800; color: #0f172a; }
-
-        .btn-prev-day {
-            background: white; border: 1.5px solid #3b82f6; color: #2563eb;
-            padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
-        }
+        .btn-prev-day { background: white; border: 1.5px solid #3b82f6; color: #2563eb; padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; }
 
         .country-toggle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
-
-        .country-pill-btn {
-            background: #f1f5f9; border: 1.5px solid transparent; padding: 14px;
-            border-radius: 16px; font-size: 15px; font-weight: 600; color: #475569;
-            display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
-        }
-
-        .country-pill-btn.active-nl {
-            background: white; border-color: #cbd5e1; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-        }
-
-        .country-pill-btn.active-foreign {
-            background: white; border-color: #cbd5e1; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-        }
+        .country-pill-btn { background: #e2e8f0; border: 1.5px solid transparent; padding: 14px; border-radius: 16px; font-size: 15px; font-weight: 700; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+        .country-pill-btn.active-nl { background: white; border-color: #cbd5e1; color: #0f172a; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+        .country-pill-btn.active-foreign { background: white; border-color: #cbd5e1; color: #0f172a; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
 
         .section-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .section-label { font-size: 13px; font-weight: 600; color: #64748b; }
+        .section-label { font-size: 13px; font-weight: 700; color: #64748b; }
+        .btn-insert-location { background: white; border: 1.5px solid #3b82f6; color: #2563eb; padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; }
+        .textarea-location { width: 100%; background: white; border: 1px solid #cbd5e1; border-radius: 14px; padding: 12px 14px; font-size: 14px; color: #1e293b; min-height: 60px; resize: none; outline: none; margin-bottom: 12px; line-height: 1.4; }
 
-        .btn-insert-location {
-            background: white; border: 1.5px solid #3b82f6; color: #2563eb;
-            padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
-        }
-
-        .textarea-location {
-            width: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 14px;
-            padding: 12px 14px; font-size: 14px; color: #1e293b; min-height: 60px; resize: none;
-            outline: none; margin-bottom: 12px; line-height: 1.4;
-        }
-
-        .photo-upload-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;
-        }
-
-        .photo-box-btn {
-            background: #ffffff; border: 1.5px dashed #cbd5e1; border-radius: 16px;
-            padding: 16px 10px; text-align: center; cursor: pointer; display: flex;
-            flex-direction: column; align-items: center; gap: 6px;
-        }
-
+        .photo-upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .photo-box-btn { background: #ffffff; border: 1.5px dashed #cbd5e1; border-radius: 16px; padding: 16px 10px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; }
         .photo-box-btn span.icon { font-size: 24px; }
-        .photo-box-btn span.text { font-size: 12px; font-weight: 600; color: #64748b; }
+        .photo-box-btn span.text { font-size: 12px; font-weight: 700; color: #64748b; }
 
-        .photo-preview-area {
-            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px;
-        }
-
-        .photo-preview-item {
-            position: relative; width: 65px; height: 65px; border-radius: 10px; overflow: hidden;
-            border: 1px solid #cbd5e1; flex-shrink: 0;
-        }
-
+        .photo-preview-area { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; }
+        .photo-preview-item { position: relative; width: 65px; height: 65px; border-radius: 10px; overflow: hidden; border: 1px solid #cbd5e1; flex-shrink: 0; }
         .photo-preview-item img { width: 100%; height: 100%; object-fit: cover; }
-        .photo-delete-badge {
-            position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6); color: white;
-            border-radius: 50%; width: 18px; height: 18px; font-size: 11px; display: flex;
-            align-items: center; justify-content: center; cursor: pointer;
-        }
+        .photo-delete-badge { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
         .inputs-row-2 { display: grid; grid-template-columns: 1fr 1.2fr; gap: 10px; margin-bottom: 16px; }
-        .sheet-input { width: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; font-size: 13px; outline: none; }
+        .sheet-input { width: 100%; background: white; border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px 12px; font-size: 13px; outline: none; }
 
         .sheet-actions-row { display: grid; grid-template-columns: 1fr 1.2fr 1.3fr; gap: 8px; margin-top: 8px; }
-        .btn-sheet-clear { background: #fff5f5; border: 1.5px solid #fca5a5; color: #dc2626; padding: 12px 6px; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
-        .btn-sheet-cancel { background: #f1f5f9; border: none; color: #475569; padding: 12px 6px; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; }
-        .btn-sheet-save { background: #0b3275; border: none; color: white; padding: 12px 6px; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .btn-sheet-clear { background: #fff5f5; border: 1.5px solid #fca5a5; color: #dc2626; padding: 12px 6px; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .btn-sheet-cancel { background: #e2e8f0; border: none; color: #475569; padding: 12px 6px; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .btn-sheet-save { background: linear-gradient(135deg, #0b3275 0%, #1d4ed8 100%); border: none; color: white; padding: 12px 6px; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
 
         @media print {
             body { background: white !important; color: black !important; }
             .app-shell { max-width: 100% !important; box-shadow: none !important; }
-            .nav-tabs-wrapper, .btn-navy-action, .grid-2-btns, .sheet-overlay, .cal-nav-btn, .backup-links { display: none !important; }
+            .nav-tabs-wrapper, .btn-navy-action, .grid-2-btns, .sheet-overlay, .cal-nav-btn, .backup-links, .period-card { display: none !important; }
             .print-header-report { display: block !important; }
             .log-card-item { border: 1px solid #ddd !important; box-shadow: none !important; break-inside: avoid; }
             .photo-preview-area { display: flex !important; }
@@ -267,7 +227,7 @@
         <h2 style="color: #0a337a; font-size: 20px;">VERBLIJFSOVERZICHT NEDERLAND (BEWIJS BRIEFADRES)</h2>
         <p style="font-size: 12px; color: #555; margin-top: 4px;">Gegenereerd op: <span id="printDate"></span></p>
         <div style="margin-top: 15px; font-size: 13px; line-height: 1.5;">
-            <strong>Totaal overzicht 2026:</strong><br>
+            <strong>Periode Briefadres:</strong> <span id="printStartDateLabel">06-07-2025</span> t/m <span id="printEndDateLabel">05-07-2027</span><br>
             - Dagen aantoonbaar in Nederland: <span id="printNlDays">0</span> van 122 vereist<br>
             - Totaal ingevoerde verblijfskosten: <span id="printTotalCost">€ 0.00</span>
         </div>
@@ -291,7 +251,7 @@
                     <span class="flag-icon">🇳🇱</span>
                     <span class="app-title">Verblijfslogboek</span>
                 </div>
-                <div class="app-subtitle" id="headerSummaryText">2026 - 0 van 122 dagen</div>
+                <div class="app-subtitle" id="headerSummaryText">Briefadres - 0 van 122 dagen</div>
             </div>
         </div>
     </div>
@@ -308,6 +268,22 @@
 
         <!-- TAB 1: OVERZICHT -->
         <div id="view-overzicht">
+            
+            <!-- Instelbare Briefadres Periode -->
+            <div class="period-card">
+                <div class="period-card-title">📅 Periode Briefadres</div>
+                <div class="period-inputs-grid">
+                    <div class="period-field">
+                        <label>Startdatum</label>
+                        <input type="date" id="periodStartDate" value="2025-07-06" onchange="updatePeriodConfig()">
+                    </div>
+                    <div class="period-field">
+                        <label>Einddatum</label>
+                        <input type="date" id="periodEndDate" value="2027-07-05" onchange="updatePeriodConfig()">
+                    </div>
+                </div>
+            </div>
+
             <div class="grid-2x2">
                 <div class="stat-card">
                     <div class="card-top-icons">
@@ -329,7 +305,7 @@
                     <div>
                         <div class="card-title-text">Dagen Buitenland</div>
                         <div class="card-main-number" id="statForeignDays">0</div>
-                        <div class="card-sub-text">gelogd in 2026</div>
+                        <div class="card-sub-text">in gekozen periode</div>
                     </div>
                 </div>
 
@@ -345,7 +321,6 @@
                     </div>
                 </div>
 
-                <!-- Tegel 4: Kosten Maand & Jaar -->
                 <div class="stat-card">
                     <div class="card-top-icons">
                         <span class="card-icon-badge">💶</span>
@@ -354,14 +329,14 @@
                     <div>
                         <div class="card-title-text" id="statCostMonthLabel">Maand Kosten</div>
                         <div class="card-main-number" style="font-size: 21px;" id="statMonthCost">€ 0.00</div>
-                        <div class="card-sub-text" id="statYearCost">Jaartotaal: € 0.00</div>
+                        <div class="card-sub-text" id="statYearCost">Totaal Periode: € 0.00</div>
                     </div>
                 </div>
             </div>
 
             <div class="progress-card">
                 <div class="progress-header">
-                    <span>Voortgang 2026</span>
+                    <span>Voortgang Periode</span>
                     <span id="statProgressPct" style="color: #b91c1c;">0%</span>
                 </div>
                 <div class="progress-track">
@@ -375,12 +350,12 @@
             </button>
 
             <div class="grid-2-btns">
-                <button class="btn-beige" onclick="exportToPDF()">
-                    <span>⇣ Exporteer PDF</span>
+                <button class="btn-beige-sexy" onclick="exportToPDF()">
+                    <span>📄 Exporteer PDF</span>
                     <span>›</span>
                 </button>
-                <button class="btn-beige" onclick="switchTab('logboek')">
-                    <span>📋 Bekijk Bewijzen</span>
+                <button class="btn-beige-sexy" onclick="exportToExcel()">
+                    <span>📊 Exporteer Excel</span>
                     <span>›</span>
                 </button>
             </div>
@@ -417,7 +392,7 @@
                         <span>Buiten NL</span>
                     </div>
                     <div class="legend-item">
-                        <div class="legend-dot" style="border: 2px solid var(--primary-blue);"></div>
+                        <div class="legend-dot" style="border: 2.5px solid var(--primary-blue);"></div>
                         <span>Vandaag</span>
                     </div>
                 </div>
@@ -495,30 +470,52 @@
 
 <script>
     const STORAGE_KEY = 'verblijfslogboek_v2_data';
+    const CONFIG_KEY = 'verblijfslogboek_v2_config';
+    
     let logs = {};
+    let config = {
+        startDate: '2025-07-06',
+        endDate: '2027-07-05'
+    };
+
     let activeDateStr = '';
     let activeCountry = 'NL';
     let activePhotos = [];
 
     function loadData() {
         try {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            if (raw) logs = JSON.parse(raw);
+            const rawData = localStorage.getItem(STORAGE_KEY);
+            if (rawData) logs = JSON.parse(rawData);
+
+            const rawConfig = localStorage.getItem(CONFIG_KEY);
+            if (rawConfig) {
+                config = JSON.parse(rawConfig);
+            }
         } catch(e) {
             console.error("Geheugen leesfout:", e);
         }
+
+        document.getElementById('periodStartDate').value = config.startDate;
+        document.getElementById('periodEndDate').value = config.endDate;
     }
 
     function persistData() {
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+            localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
         } catch(e) {
             alert("Let op: Opslaan in browser mislukt.");
         }
         renderAllViews();
     }
 
-    let viewDate = new Date(2026, 6, 1);
+    function updatePeriodConfig() {
+        config.startDate = document.getElementById('periodStartDate').value;
+        config.endDate = document.getElementById('periodEndDate').value;
+        persistData();
+    }
+
+    let viewDate = new Date();
 
     function switchTab(tabKey) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -537,23 +534,29 @@
         let nlCount = 0;
         let foreignCount = 0;
         let monthCost = 0;
-        let totalYearCost = 0;
+        let totalPeriodCost = 0;
+
+        const startStr = config.startDate;
+        const endStr = config.endDate;
 
         const currentMonthPrefix = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}`;
         const monthsShort = ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
 
         Object.entries(logs).forEach(([dateKey, entry]) => {
-            if (entry.status === 'NL') nlCount++;
-            if (entry.status === 'FOREIGN') foreignCount++;
-            
-            if (entry.cost) {
-                const costVal = parseFloat(entry.cost) || 0;
-                totalYearCost += costVal;
+            // Count entries inside specified custom date range
+            if (dateKey >= startStr && dateKey <= endStr) {
+                if (entry.status === 'NL') nlCount++;
+                if (entry.status === 'FOREIGN') foreignCount++;
                 
-                // Calculate monthly cost based on active calendar view month
-                if (dateKey.startsWith(currentMonthPrefix)) {
-                    monthCost += costVal;
+                if (entry.cost) {
+                    const costVal = parseFloat(entry.cost) || 0;
+                    totalPeriodCost += costVal;
                 }
+            }
+
+            // Monthly cost count for active calendar view
+            if (entry.cost && dateKey.startsWith(currentMonthPrefix)) {
+                monthCost += parseFloat(entry.cost) || 0;
             }
         });
 
@@ -564,14 +567,13 @@
         document.getElementById('statForeignDays').innerText = foreignCount;
         document.getElementById('statNeededDays').innerText = needed;
         
-        // Cost Display
         document.getElementById('statCostMonthLabel').innerText = `Kosten (${monthsShort[viewDate.getMonth()]})`;
         document.getElementById('statMonthCost').innerText = `€ ${monthCost.toFixed(2)}`;
-        document.getElementById('statYearCost').innerText = `Jaartotaal: € ${totalYearCost.toFixed(2)}`;
+        document.getElementById('statYearCost').innerText = `Totaal Periode: € ${totalPeriodCost.toFixed(2)}`;
 
         document.getElementById('statProgressPct').innerText = `${pct}%`;
         document.getElementById('progressBarFill').style.width = `${pct}%`;
-        document.getElementById('headerSummaryText').innerText = `2026 - ${nlCount} van 122 dagen`;
+        document.getElementById('headerSummaryText').innerText = `Briefadres - ${nlCount} van 122 dagen`;
     }
 
     function renderCalendar() {
@@ -610,9 +612,7 @@
                 if (logEntry.status === 'FOREIGN') cell.classList.add('is-foreign');
             }
 
-            if (dateStr === todayStr) {
-                cell.classList.add('is-today');
-            }
+            if (dateStr === todayStr) cell.classList.add('is-today');
 
             cell.onclick = () => openEntrySheet(dateStr);
             grid.appendChild(cell);
@@ -854,12 +854,19 @@
         let nlCount = 0;
         let totalCost = 0;
 
+        const startStr = config.startDate;
+        const endStr = config.endDate;
+
         sortedDates.forEach(dateStr => {
-            if (logs[dateStr].status === 'NL') nlCount++;
-            if (logs[dateStr].cost) totalCost += parseFloat(logs[dateStr].cost) || 0;
+            if (dateStr >= startStr && dateStr <= endStr) {
+                if (logs[dateStr].status === 'NL') nlCount++;
+                if (logs[dateStr].cost) totalCost += parseFloat(logs[dateStr].cost) || 0;
+            }
         });
 
         document.getElementById('printDate').innerText = new Date().toLocaleDateString('nl-NL');
+        document.getElementById('printStartDateLabel').innerText = config.startDate;
+        document.getElementById('printEndDateLabel').innerText = config.endDate;
         document.getElementById('printNlDays').innerText = nlCount;
         document.getElementById('printTotalCost').innerText = `€ ${totalCost.toFixed(2)}`;
 
@@ -867,8 +874,42 @@
         setTimeout(() => { window.print(); }, 300);
     }
 
+    function exportToExcel() {
+        const sortedDates = Object.keys(logs).sort();
+        if (sortedDates.length === 0) {
+            alert("Er zijn nog geen verblijfsgegevens om te exporteren.");
+            return;
+        }
+
+        let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+        csvContent += "Datum;Land Status;Locatie;Kosten (€);Betalingsbewijs;Aantal Fotos\n";
+
+        sortedDates.forEach(dateStr => {
+            const entry = logs[dateStr];
+            const statusLabel = entry.status === 'NL' ? 'In Nederland' : 'Buiten NL';
+            const locationText = (entry.location || '').replace(/;/g, ',');
+            const costVal = entry.cost ? parseFloat(entry.cost).toFixed(2) : '0.00';
+            const paymentText = (entry.payment || '').replace(/;/g, ',');
+            const photoCount = entry.photos ? entry.photos.length : 0;
+
+            csvContent += `${dateStr};"${statusLabel}";"${locationText}";${costVal};"${paymentText}";${photoCount}\n`;
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `verblijfslogboek_${config.startDate}_tot_${config.endDate}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     function exportDataBackup() {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(logs));
+        const backupPayload = {
+            logs: logs,
+            config: config
+        };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupPayload));
         const dlAnchorElem = document.createElement('a');
         dlAnchorElem.setAttribute("href", dataStr);
         dlAnchorElem.setAttribute("download", `verblijfslogboek_backup_${new Date().toISOString().split('T')[0]}.json`);
@@ -879,8 +920,15 @@
         const fileReader = new FileReader();
         fileReader.onload = function(e) {
             try {
-                const importedLogs = JSON.parse(e.target.result);
-                logs = { ...logs, ...importedLogs };
+                const imported = JSON.parse(e.target.result);
+                if (imported.logs) {
+                    logs = { ...logs, ...imported.logs };
+                    if (imported.config) config = imported.config;
+                } else {
+                    logs = { ...logs, ...imported };
+                }
+                document.getElementById('periodStartDate').value = config.startDate;
+                document.getElementById('periodEndDate').value = config.endDate;
                 persistData();
                 alert("Back-up succesvol ingeladen!");
             } catch(err) {
