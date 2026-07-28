@@ -937,6 +937,7 @@
         setTimeout(() => { window.print(); }, 300);
     }
 
+    /* VUILNISVRIJE GEGARANDEERDE EXCEL/CSV EXPORT */
     function exportToExcel() {
         const sortedDates = Object.keys(logs).sort();
         if (sortedDates.length === 0) {
@@ -944,8 +945,7 @@
             return;
         }
 
-        let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-        csvContent += "Datum;Land Status;Locatie;Kosten (€);Gratis Plek;Betalingsbewijs;Aantal Fotos\n";
+        let csvLines = ["\uFEFFDatum;Land Status;Locatie;Kosten (€);Gratis Plek;Betalingsbewijs;Aantal Fotos"];
 
         sortedDates.forEach(dateStr => {
             const entry = logs[dateStr];
@@ -956,16 +956,26 @@
             const paymentText = (entry.payment || '').replace(/;/g, ',');
             const photoCount = entry.photos ? entry.photos.length : 0;
 
-            csvContent += `${dateStr};"${statusLabel}";"${locationText}";${costVal};"${isFreeLabel}";"${paymentText}";${photoCount}\n`;
+            csvLines.push(`${dateStr};"${statusLabel}";"${locationText}";${costVal};"${isFreeLabel}";"${paymentText}";${photoCount}`);
         });
 
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `verblijfslogboek_${config.startDate}_tot_${config.endDate}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const csvContent = csvLines.join("\n");
+        const fileName = `verblijfslogboek_${config.startDate}_tot_${config.endDate}.csv`;
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const blobUrl = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = fileName;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        setTimeout(() => {
+            alert("✓ Excel-bestand gegenereerd! Je vindt het in je 'Bestanden' / 'Downloads' map op je telefoon.");
+        }, 300);
     }
 
     /* VUILNISVRIJE GEGARANDEERDE BACK-UP OPSLAAN IN BESTANDEN */
@@ -974,7 +984,6 @@
         const fileName = `verblijfslogboek_backup_${new Date().toISOString().split('T')[0]}.json`;
         const jsonStr = JSON.stringify(payload, null, 2);
 
-        // Gebruik een Blob URL in een nieuw tabblad/venster voor iOS/Safari PWA
         const blob = new Blob([jsonStr], { type: 'application/json' });
         const blobUrl = URL.createObjectURL(blob);
 
