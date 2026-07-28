@@ -207,8 +207,17 @@
         .photo-preview-item img { width: 100%; height: 100%; object-fit: cover; }
         .photo-delete-badge { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
+        /* Gratis Checkbox Container */
+        .free-spot-checkbox-row {
+            display: flex; align-items: center; gap: 8px; background: #e2f7ed; border: 1px solid #a7f3d0;
+            padding: 10px 14px; border-radius: 12px; margin-bottom: 12px; cursor: pointer;
+        }
+        .free-spot-checkbox-row input { width: 18px; height: 18px; accent-color: #0d6b3e; cursor: pointer; }
+        .free-spot-checkbox-row label { font-size: 13px; font-weight: 700; color: #0e834e; cursor: pointer; }
+
         .inputs-row-2 { display: grid; grid-template-columns: 1fr 1.2fr; gap: 10px; margin-bottom: 16px; }
         .sheet-input { width: 100%; background: white; border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px 12px; font-size: 13px; outline: none; }
+        .sheet-input:disabled { background: #f1f5f9; color: #94a3b8; }
 
         .sheet-actions-row { display: grid; grid-template-columns: 1fr 1.2fr 1.3fr; gap: 8px; margin-top: 8px; }
         .btn-sheet-clear { background: #fff5f5; border: 1.5px solid #fca5a5; color: #dc2626; padding: 12px 6px; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
@@ -335,8 +344,8 @@
                     </div>
                     <div>
                         <div class="card-title-text" id="statCostMonthLabel">Maand Kosten</div>
-                        <div class="card-main-number" style="font-size: 21px;" id="statMonthCost">€ 0.00</div>
-                        <div class="card-sub-text" id="statYearCost">Totaal Periode: € 0.00</div>
+                        <div class="card-main-number" style="font-size: 20px;" id="statMonthCost">€ 0.00</div>
+                        <div class="card-sub-text" id="statFreeSpotsCount">Gratis plekken: 0 (maand) / 0 (periode)</div>
                     </div>
                 </div>
             </div>
@@ -459,6 +468,12 @@
         <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" onchange="handlePhotoUpload(event)">
         <input type="file" id="galleryInput" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
 
+        <!-- Gratis Plek Checkbox -->
+        <div class="free-spot-checkbox-row" onclick="toggleFreeSpotCheckbox()">
+            <input type="checkbox" id="sheetIsFreeInput" onchange="handleFreeSpotToggle(event)">
+            <label for="sheetIsFreeInput">🆓 Gratis camperplaats (0.00)</label>
+        </div>
+
         <div class="inputs-row-2">
             <div>
                 <span class="section-label" style="display:block; margin-bottom: 4px;">Kosten (€)</span>
@@ -545,6 +560,8 @@
         let foreignCount = 0;
         let monthCost = 0;
         let totalPeriodCost = 0;
+        let freeSpotsMonth = 0;
+        let freeSpotsPeriod = 0;
 
         const startStr = config.startDate;
         const endStr = config.endDate;
@@ -553,7 +570,10 @@
         const monthsShort = ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
 
         Object.entries(logs).forEach(([dateKey, entry]) => {
-            if (dateKey >= startStr && dateKey <= endStr) {
+            const isInsidePeriod = (dateKey >= startStr && dateKey <= endStr);
+            const isCurrentMonth = dateKey.startsWith(currentMonthPrefix);
+
+            if (isInsidePeriod) {
                 if (entry.status === 'NL') nlCount++;
                 if (entry.status === 'FOREIGN') foreignCount++;
                 
@@ -561,10 +581,19 @@
                     const costVal = parseFloat(entry.cost) || 0;
                     totalPeriodCost += costVal;
                 }
+
+                if (entry.isFree) {
+                    freeSpotsPeriod++;
+                }
             }
 
-            if (entry.cost && dateKey.startsWith(currentMonthPrefix)) {
-                monthCost += parseFloat(entry.cost) || 0;
+            if (isCurrentMonth) {
+                if (entry.cost) {
+                    monthCost += parseFloat(entry.cost) || 0;
+                }
+                if (entry.isFree) {
+                    freeSpotsMonth++;
+                }
             }
         });
 
@@ -577,7 +606,7 @@
         
         document.getElementById('statCostMonthLabel').innerText = `Kosten (${monthsShort[viewDate.getMonth()]})`;
         document.getElementById('statMonthCost').innerText = `€ ${monthCost.toFixed(2)}`;
-        document.getElementById('statYearCost').innerText = `Totaal Periode: € ${totalPeriodCost.toFixed(2)}`;
+        document.getElementById('statFreeSpotsCount').innerText = `Gratis plekken: ${freeSpotsMonth} (maand) / ${freeSpotsPeriod} (periode)`;
 
         document.getElementById('statProgressPct').innerText = `${pct}%`;
         document.getElementById('progressBarFill').style.width = `${pct}%`;
@@ -658,7 +687,12 @@
             item.onclick = () => openEntrySheet(dateStr);
 
             let subInfoParts = [];
-            if (entry.cost) subInfoParts.push(`€${parseFloat(entry.cost).toFixed(2)} / nacht`);
+            if (entry.isFree) {
+                subInfoParts.push(`🆓 Gratis camperplaats`);
+            } else if (entry.cost) {
+                subInfoParts.push(`€${parseFloat(entry.cost).toFixed(2)} / nacht`);
+            }
+            
             if (entry.payment) subInfoParts.push(`Bewijs: ${entry.payment}`);
             if (entry.photos && entry.photos.length > 0) subInfoParts.push(`📷 ${entry.photos.length} foto('s)`);
 
@@ -692,6 +726,21 @@
         }
     }
 
+    function handleFreeSpotToggle(event) {
+        const isFree = document.getElementById('sheetIsFreeInput').checked;
+        const costInput = document.getElementById('sheetCostInput');
+        const paymentInput = document.getElementById('sheetPaymentInput');
+
+        if (isFree) {
+            costInput.value = '0.00';
+            costInput.disabled = true;
+            if (!paymentInput.value) paymentInput.value = 'Gratis';
+        } else {
+            costInput.disabled = false;
+            if (paymentInput.value === 'Gratis') paymentInput.value = '';
+        }
+    }
+
     function openEntrySheet(dateStr = null) {
         activeDateStr = dateStr || new Date().toISOString().split('T')[0];
         
@@ -706,16 +755,19 @@
             document.getElementById('sheetLocationText').value = entry.location || '';
             document.getElementById('sheetCostInput').value = entry.cost || '';
             document.getElementById('sheetPaymentInput').value = entry.payment || '';
+            document.getElementById('sheetIsFreeInput').checked = !!entry.isFree;
             activePhotos = entry.photos || [];
             selectCountry(entry.status || 'NL');
         } else {
             document.getElementById('sheetLocationText').value = '';
             document.getElementById('sheetCostInput').value = '';
             document.getElementById('sheetPaymentInput').value = '';
+            document.getElementById('sheetIsFreeInput').checked = false;
             activePhotos = [];
             selectCountry('NL');
         }
 
+        handleFreeSpotToggle();
         renderPhotoPreviews();
         document.getElementById('entrySheet').classList.add('active');
     }
@@ -751,6 +803,7 @@
             status: activeCountry,
             cost: document.getElementById('sheetCostInput').value,
             payment: document.getElementById('sheetPaymentInput').value,
+            isFree: document.getElementById('sheetIsFreeInput').checked,
             photos: activePhotos
         };
 
@@ -895,17 +948,18 @@
         }
 
         let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-        csvContent += "Datum;Land Status;Locatie;Kosten (€);Betalingsbewijs;Aantal Fotos\n";
+        csvContent += "Datum;Land Status;Locatie;Kosten (€);Gratis Plek;Betalingsbewijs;Aantal Fotos\n";
 
         sortedDates.forEach(dateStr => {
             const entry = logs[dateStr];
             const statusLabel = entry.status === 'NL' ? 'In Nederland' : 'Buiten NL';
             const locationText = (entry.location || '').replace(/;/g, ',');
             const costVal = entry.cost ? parseFloat(entry.cost).toFixed(2) : '0.00';
+            const isFreeLabel = entry.isFree ? 'Ja' : 'Nee';
             const paymentText = (entry.payment || '').replace(/;/g, ',');
             const photoCount = entry.photos ? entry.photos.length : 0;
 
-            csvContent += `${dateStr};"${statusLabel}";"${locationText}";${costVal};"${paymentText}";${photoCount}\n`;
+            csvContent += `${dateStr};"${statusLabel}";"${locationText}";${costVal};"${isFreeLabel}";"${paymentText}";${photoCount}\n`;
         });
 
         const encodedUri = encodeURI(csvContent);
