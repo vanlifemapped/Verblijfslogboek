@@ -175,9 +175,12 @@
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
         .sheet-handle { width: 38px; height: 5px; background: #cbd5e1; border-radius: 3px; margin: 0 auto 14px auto; }
-        .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .sheet-date-title { font-size: 18px; font-weight: 800; color: #0f172a; }
-        .btn-prev-day { background: white; border: 1.5px solid #3b82f6; color: #2563eb; padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; }
+        
+        .sheet-header-nav { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+        .sheet-date-title { font-size: 18px; font-weight: 800; color: #0f172a; text-align: center; }
+        .sheet-nav-btns { display: flex; justify-content: space-between; gap: 10px; }
+
+        .btn-nav-day { background: white; border: 1.5px solid #3b82f6; color: #2563eb; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; flex: 1; text-align: center; }
 
         .country-toggle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
         .country-pill-btn { background: #e2e8f0; border: 1.5px solid transparent; padding: 14px; border-radius: 16px; font-size: 15px; font-weight: 700; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
@@ -269,7 +272,6 @@
         <!-- TAB 1: OVERZICHT -->
         <div id="view-overzicht">
             
-            <!-- Instelbare Briefadres Periode -->
             <div class="period-card">
                 <div class="period-card-title">📅 Periode Briefadres</div>
                 <div class="period-inputs-grid">
@@ -407,14 +409,17 @@
     </div>
 </div>
 
-<!-- iOS Bottom Sheet Modal -->
+<!-- Bottom Sheet -->
 <div class="sheet-overlay" id="entrySheet">
     <div class="sheet-card">
         <div class="sheet-handle"></div>
         
-        <div class="sheet-header">
+        <div class="sheet-header-nav">
             <div class="sheet-date-title" id="sheetDateTitle">maandag 27 juli 2026</div>
-            <button class="btn-prev-day" onclick="navigateDay(-1)">← Vorige dag</button>
+            <div class="sheet-nav-btns">
+                <button class="btn-nav-day" onclick="navigateDay(-1)">← Vorige dag</button>
+                <button class="btn-nav-day" onclick="navigateDay(1)">Volgende dag →</button>
+            </div>
         </div>
 
         <div class="country-toggle-grid">
@@ -543,7 +548,6 @@
         const monthsShort = ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
 
         Object.entries(logs).forEach(([dateKey, entry]) => {
-            // Count entries inside specified custom date range
             if (dateKey >= startStr && dateKey <= endStr) {
                 if (entry.status === 'NL') nlCount++;
                 if (entry.status === 'FOREIGN') foreignCount++;
@@ -554,7 +558,6 @@
                 }
             }
 
-            // Monthly cost count for active calendar view
             if (entry.cost && dateKey.startsWith(currentMonthPrefix)) {
                 monthCost += parseFloat(entry.cost) || 0;
             }
@@ -719,7 +722,12 @@
     function navigateDay(delta) {
         const d = new Date(activeDateStr);
         d.setDate(d.getDate() + delta);
-        openEntrySheet(d.toISOString().split('T')[0]);
+        
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        
+        openEntrySheet(`${year}-${month}-${day}`);
     }
 
     function clearCurrentEntry() {
