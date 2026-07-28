@@ -95,7 +95,7 @@
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
-        .card-top-icons { display: flex; justify-between: space-between; align-items: center; margin-bottom: 4px; }
+        .card-top-icons { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
         .card-icon-badge {
             width: 30px; height: 30px; border-radius: 50%; background-color: #f0f4fa;
             display: flex; align-items: center; justify-content: center; font-size: 14px;
@@ -365,7 +365,7 @@
             </div>
 
             <div class="backup-links">
-                <button class="backup-btn" onclick="openBackupModal()">💾 Back-up maken</button>
+                <button class="backup-btn" onclick="saveBackupToFile()">💾 Back-up opslaan in Bestanden</button>
                 <button class="backup-btn" onclick="openRestoreModal()">📂 Back-up herstellen</button>
             </div>
         </div>
@@ -479,37 +479,22 @@
     </div>
 </div>
 
-<!-- Back-up Maken Modal -->
-<div class="sheet-overlay" id="backupModal">
-    <div class="sheet-card">
-        <div class="sheet-handle"></div>
-        <div class="sheet-date-title" style="margin-bottom: 12px;">💾 Back-up Maken</div>
-        <p style="font-size: 12px; color: #64748b; margin-bottom: 10px; line-height: 1.4;">
-            Tik op <strong>Kopieer naar klembord</strong> en plak deze code bijvoorbeeld in je Notities-app op je telefoon om al je ingevoerde dagen veilig te bewaren.
-        </p>
-        <textarea id="backupTextarea" readonly style="width:100%; height: 140px; border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px; font-size: 11px; font-family: monospace; background: #fff; margin-bottom: 12px; resize: none;"></textarea>
-        
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-            <button class="btn-sheet-save" style="width: 100%;" onclick="copyBackupToClipboard()">📋 Kopieer naar klembord</button>
-            <button class="btn-sheet-cancel" style="width: 100%;" onclick="closeBackupModal()">Sluiten</button>
-        </div>
-    </div>
-</div>
-
 <!-- Back-up Herstellen Modal -->
 <div class="sheet-overlay" id="restoreModal">
     <div class="sheet-card">
         <div class="sheet-handle"></div>
         <div class="sheet-date-title" style="margin-bottom: 12px;">📂 Back-up Herstellen</div>
         <p style="font-size: 12px; color: #64748b; margin-bottom: 10px; line-height: 1.4;">
-            Plak hieronder je gekopieerde back-up tekst óf kies een eerder gedownload `.json` bestand:
+            Kies je eerder opgeslagen back-up bestand uit je <strong>Bestanden</strong>-app of plak de back-up tekst:
         </p>
-        <textarea id="restoreTextarea" placeholder="Plak hier je back-up code..." style="width:100%; height: 120px; border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px; font-size: 11px; font-family: monospace; background: #fff; margin-bottom: 12px; resize: none;"></textarea>
         
-        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-            <button class="btn-sheet-cancel" style="flex: 1; font-size: 12px;" onclick="document.getElementById('fileRestoreInput').click()">📁 Of kies bestand</button>
-            <input type="file" id="fileRestoreInput" style="display:none;" accept=".json" onchange="handleFileRestore(event)">
+        <div style="margin-bottom: 12px;">
+            <button class="btn-sheet-save" style="width: 100%; font-size: 14px; padding: 14px;" onclick="document.getElementById('fileRestoreInput').click()">📁 Selecteer Back-up Bestand</button>
+            <input type="file" id="fileRestoreInput" style="display:none;" accept=".json,text/plain" onchange="handleFileRestore(event)">
         </div>
+
+        <p style="font-size: 11px; color: #94a3b8; text-align: center; margin-bottom: 8px;">OF PLAK HIER DE TEKST</p>
+        <textarea id="restoreTextarea" placeholder="Plak hier eventueel handmatig je back-up code..." style="width:100%; height: 80px; border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px; font-size: 11px; font-family: monospace; background: #fff; margin-bottom: 12px; resize: none;"></textarea>
 
         <div style="display: flex; gap: 8px;">
             <button class="btn-sheet-cancel" style="flex: 1;" onclick="closeRestoreModal()">Annuleer</button>
@@ -983,28 +968,27 @@
         document.body.removeChild(link);
     }
 
-    /* Back-up & Herstel Systeem */
-    function openBackupModal() {
+    /* VUILNISVRIJE GEGARANDEERDE BACK-UP OPSLAAN IN BESTANDEN */
+    function saveBackupToFile() {
         const payload = { logs: logs, config: config };
-        document.getElementById('backupTextarea').value = JSON.stringify(payload, null, 2);
-        document.getElementById('backupModal').classList.add('active');
-    }
+        const fileName = `verblijfslogboek_backup_${new Date().toISOString().split('T')[0]}.json`;
+        const jsonStr = JSON.stringify(payload, null, 2);
 
-    function closeBackupModal() {
-        document.getElementById('backupModal').classList.remove('active');
-    }
+        // Gebruik een Blob URL in een nieuw tabblad/venster voor iOS/Safari PWA
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const blobUrl = URL.createObjectURL(blob);
 
-    function copyBackupToClipboard() {
-        const txtarea = document.getElementById('backupTextarea');
-        txtarea.select();
-        txtarea.setSelectionRange(0, 999999);
-        try {
-            navigator.clipboard.writeText(txtarea.value);
-            alert("✓ Back-up gekopieerd naar klembord! Plak het gerust in Notities.");
-        } catch(e) {
-            document.execCommand('copy');
-            alert("✓ Back-up gekopieerd!");
-        }
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = fileName;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        setTimeout(() => {
+            alert("✓ Back-up gegenereerd! Je vindt het bestand in je 'Bestanden' / 'Downloads' map op je telefoon.");
+        }, 300);
     }
 
     function openRestoreModal() {
@@ -1036,7 +1020,7 @@
             closeRestoreModal();
             alert("✓ Back-up succesvol hersteld!");
         } catch(e) {
-            alert("Ongeldige back-up tekst. Controleer of je de volledige code hebt gekopieerd.");
+            alert("Ongeldige back-up tekst of bestand. Controleer of het een geldige back-up is.");
         }
     }
 
@@ -1047,6 +1031,7 @@
         const reader = new FileReader();
         reader.onload = function(e) {
             document.getElementById('restoreTextarea').value = e.target.result;
+            executeTextRestore();
         };
         reader.readAsText(file);
     }
