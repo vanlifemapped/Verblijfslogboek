@@ -95,7 +95,7 @@
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
-        .card-top-icons { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .card-top-icons { display: flex; justify-between: space-between; align-items: center; margin-bottom: 4px; }
         .card-icon-badge {
             width: 30px; height: 30px; border-radius: 50%; background-color: #f0f4fa;
             display: flex; align-items: center; justify-content: center; font-size: 14px;
@@ -365,9 +365,8 @@
             </div>
 
             <div class="backup-links">
-                <button class="backup-btn" onclick="exportDataBackup()">💾 Back-up opslaan</button>
-                <button class="backup-btn" onclick="document.getElementById('importFileInput').click()">📂 Back-up laden</button>
-                <input type="file" id="importFileInput" style="display:none;" accept=".json" onchange="importDataBackup(event)">
+                <button class="backup-btn" onclick="openBackupModal()">💾 Back-up maken</button>
+                <button class="backup-btn" onclick="openRestoreModal()">📂 Back-up herstellen</button>
             </div>
         </div>
 
@@ -411,7 +410,7 @@
     </div>
 </div>
 
-<!-- Bottom Sheet Modal -->
+<!-- Bottom Sheet Log Entry Modal -->
 <div class="sheet-overlay" id="entrySheet">
     <div class="sheet-card">
         <div class="sheet-handle"></div>
@@ -456,8 +455,8 @@
         <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" onchange="handlePhotoUpload(event)">
         <input type="file" id="galleryInput" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
 
-        <div class="free-spot-checkbox-row" onclick="toggleFreeSpotCheckbox()">
-            <input type="checkbox" id="sheetIsFreeInput" onchange="handleFreeSpotToggle(event)">
+        <div class="free-spot-checkbox-row">
+            <input type="checkbox" id="sheetIsFreeInput" onchange="handleFreeSpotToggle()">
             <label for="sheetIsFreeInput">🆓 Gratis camperplaats (0.00)</label>
         </div>
 
@@ -476,6 +475,45 @@
             <button class="btn-sheet-clear" onclick="clearCurrentEntry()">🗑️ Wis</button>
             <button class="btn-sheet-cancel" onclick="closeEntrySheet()">Annuleer</button>
             <button class="btn-sheet-save" onclick="saveSheetEntry()">✓ Opslaan</button>
+        </div>
+    </div>
+</div>
+
+<!-- Back-up Maken Modal -->
+<div class="sheet-overlay" id="backupModal">
+    <div class="sheet-card">
+        <div class="sheet-handle"></div>
+        <div class="sheet-date-title" style="margin-bottom: 12px;">💾 Back-up Maken</div>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 10px; line-height: 1.4;">
+            Tik op <strong>Kopieer naar klembord</strong> en plak deze code bijvoorbeeld in je Notities-app op je telefoon om al je ingevoerde dagen veilig te bewaren.
+        </p>
+        <textarea id="backupTextarea" readonly style="width:100%; height: 140px; border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px; font-size: 11px; font-family: monospace; background: #fff; margin-bottom: 12px; resize: none;"></textarea>
+        
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="btn-sheet-save" style="width: 100%;" onclick="copyBackupToClipboard()">📋 Kopieer naar klembord</button>
+            <button class="btn-sheet-cancel" style="width: 100%;" onclick="closeBackupModal()">Sluiten</button>
+        </div>
+    </div>
+</div>
+
+<!-- Back-up Herstellen Modal -->
+<div class="sheet-overlay" id="restoreModal">
+    <div class="sheet-card">
+        <div class="sheet-handle"></div>
+        <div class="sheet-date-title" style="margin-bottom: 12px;">📂 Back-up Herstellen</div>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 10px; line-height: 1.4;">
+            Plak hieronder je gekopieerde back-up tekst óf kies een eerder gedownload `.json` bestand:
+        </p>
+        <textarea id="restoreTextarea" placeholder="Plak hier je back-up code..." style="width:100%; height: 120px; border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px; font-size: 11px; font-family: monospace; background: #fff; margin-bottom: 12px; resize: none;"></textarea>
+        
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <button class="btn-sheet-cancel" style="flex: 1; font-size: 12px;" onclick="document.getElementById('fileRestoreInput').click()">📁 Of kies bestand</button>
+            <input type="file" id="fileRestoreInput" style="display:none;" accept=".json" onchange="handleFileRestore(event)">
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+            <button class="btn-sheet-cancel" style="flex: 1;" onclick="closeRestoreModal()">Annuleer</button>
+            <button class="btn-sheet-save" style="flex: 1;" onclick="executeTextRestore()">✓ Herstel Data</button>
         </div>
     </div>
 </div>
@@ -945,62 +983,72 @@
         document.body.removeChild(link);
     }
 
-    // Slimme Back-up functie die ook werkt binnen een iOS PWA Startscherm-app
-    async function exportDataBackup() {
-        const backupPayload = {
-            logs: logs,
-            config: config
-        };
-        const fileName = `verblijfslogboek_backup_${new Date().toISOString().split('T')[0]}.json`;
-        const jsonStr = JSON.stringify(backupPayload, null, 2);
-
-        // Gebruik de iOS Web Share API als deze beschikbaar is
-        if (navigator.share && navigator.canShare) {
-            try {
-                const file = new File([jsonStr], fileName, { type: 'application/json' });
-                if (navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        files: [file],
-                        title: 'Verblijfslogboek Back-up',
-                        text: 'Back-up van verblijfslogboek gegevens'
-                    });
-                    return;
-                }
-            } catch (err) {
-                if (err.name !== 'AbortError') console.error("Share error:", err);
-            }
-        }
-
-        // Fallback voor browsers die Geen Share API ondersteunen
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(jsonStr);
-        const dlAnchorElem = document.createElement('a');
-        dlAnchorElem.setAttribute("href", dataStr);
-        dlAnchorElem.setAttribute("download", fileName);
-        document.body.appendChild(dlAnchorElem);
-        dlAnchorElem.click();
-        document.body.removeChild(dlAnchorElem);
+    /* Back-up & Herstel Systeem */
+    function openBackupModal() {
+        const payload = { logs: logs, config: config };
+        document.getElementById('backupTextarea').value = JSON.stringify(payload, null, 2);
+        document.getElementById('backupModal').classList.add('active');
     }
 
-    function importDataBackup(event) {
-        const fileReader = new FileReader();
-        fileReader.onload = function(e) {
-            try {
-                const imported = JSON.parse(e.target.result);
-                if (imported.logs) {
-                    logs = { ...logs, ...imported.logs };
-                    if (imported.config) config = imported.config;
-                } else {
-                    logs = { ...logs, ...imported };
-                }
-                document.getElementById('periodStartDate').value = config.startDate;
-                document.getElementById('periodEndDate').value = config.endDate;
-                persistData();
-                alert("Back-up succesvol ingeladen!");
-            } catch(err) {
-                alert("Ongeldig back-up bestand.");
+    function closeBackupModal() {
+        document.getElementById('backupModal').classList.remove('active');
+    }
+
+    function copyBackupToClipboard() {
+        const txtarea = document.getElementById('backupTextarea');
+        txtarea.select();
+        txtarea.setSelectionRange(0, 999999);
+        try {
+            navigator.clipboard.writeText(txtarea.value);
+            alert("✓ Back-up gekopieerd naar klembord! Plak het gerust in Notities.");
+        } catch(e) {
+            document.execCommand('copy');
+            alert("✓ Back-up gekopieerd!");
+        }
+    }
+
+    function openRestoreModal() {
+        document.getElementById('restoreTextarea').value = '';
+        document.getElementById('restoreModal').classList.add('active');
+    }
+
+    function closeRestoreModal() {
+        document.getElementById('restoreModal').classList.remove('active');
+    }
+
+    function executeTextRestore() {
+        const rawText = document.getElementById('restoreTextarea').value.trim();
+        if (!rawText) {
+            alert("Voer eerst back-up tekst in of kies een bestand.");
+            return;
+        }
+        try {
+            const imported = JSON.parse(rawText);
+            if (imported.logs) {
+                logs = { ...logs, ...imported.logs };
+                if (imported.config) config = imported.config;
+            } else {
+                logs = { ...logs, ...imported };
             }
+            document.getElementById('periodStartDate').value = config.startDate;
+            document.getElementById('periodEndDate').value = config.endDate;
+            persistData();
+            closeRestoreModal();
+            alert("✓ Back-up succesvol hersteld!");
+        } catch(e) {
+            alert("Ongeldige back-up tekst. Controleer of je de volledige code hebt gekopieerd.");
+        }
+    }
+
+    function handleFileRestore(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('restoreTextarea').value = e.target.result;
         };
-        fileReader.readAsText(event.target.files[0]);
+        reader.readAsText(file);
     }
 
     function renderAllViews() {
